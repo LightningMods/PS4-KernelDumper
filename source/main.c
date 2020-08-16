@@ -3,11 +3,11 @@
 *
 * ============== Kernel Dumper for PS4 - WildCard && LM ===============
 *
-*	Support for 6.20
+*	Support for 6.00-6.02
 *
 *	Thanks to:
 *	-Qwertyuiop for his kernel exploits
-* -Specter for his Code Execution method
+* 	-Specter for his Code Execution method
 *	-IDC for helping to understand things
 *	-Shadow for the copyout trick ;)
 *       -ChendoChap for the 6.20 exploit etc
@@ -25,7 +25,7 @@ int kdump(struct thread *td){
 
 	
 
-	int (*printfkernel)(const char *fmt, ...) = (void *)(kbase + 0x00307E10);
+	int (*printfkernel)(const char *fmt, ...) = (void *)(kbase + 0x00307DF0);
 	int (*copyout)(const void *kaddr, void *uaddr, size_t len) = (void *)(kbase + 0x00114800);
 	void (*bzero)(void *b, size_t len) = (void *)(kbase + 0x00114640);
 
@@ -55,14 +55,14 @@ int kpayload(struct thread *td){
 
 	void* kernel_base = &((uint8_t*)__readmsr(0xC0000082))[-0x1C0];
 	uint8_t* kernel_ptr = (uint8_t*)kernel_base;
-	void** got_prison0 =   (void**)&kernel_ptr[0x0113D458];
-	void** got_rootvnode = (void**)&kernel_ptr[0x021C3AC0];
+	void** got_prison0 =   (void**)&kernel_ptr[0x01139458];
+	void** got_rootvnode = (void**)&kernel_ptr[0x021BFAC0];
 
          kbase=kernel_base;
 
 	// resolve kernel functions
 
-	int (*printfkernel)(const char *fmt, ...) = (void *)(kernel_base + 0x00307E10);
+	int (*printfkernel)(const char *fmt, ...) = (void *)(kernel_base + 0x00307DF0);
 
 	cred->cr_uid = 0;
 	cred->cr_ruid = 0;
@@ -141,7 +141,7 @@ int _main(struct thread *td){
 
 
 	// write to file		
-	int fd = open("/mnt/usb0/Kernel_Dump_620.bin", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	int fd = open("/mnt/usb0/Kernel_Dump_602.bin", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 
 	write(fd, filedump, KERN_DUMPSIZE); // Write the userland buffer to USB
 
